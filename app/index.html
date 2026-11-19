@@ -3,71 +3,98 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<meta name="description" content="Vice Sunset Cover Studio — turn your photos and a caption into GTA-style poster cover art, offline in the browser, exported as a PNG.">
-<title>Vice Sunset Cover Studio — GTA-style cover art maker</title>
+<title>Vice Sunset Cover Studio — GTA-style cover maker</title>
 <link rel="stylesheet" href="./style.css">
 </head>
 <body>
-<main class="app">
+<header class="topbar">
+  <h1>Vice Sunset <span>Cover Studio</span></h1>
+  <p>Turn your photos into a Vice City sunset poster. Runs offline — nothing is uploaded.</p>
+</header>
+<main class="studio">
   <section class="controls" aria-label="Cover controls">
-    <h1>Vice Sunset<br>Cover Studio</h1>
-    <p class="tagline">Your photo + a caption, made into poster cover art. Everything stays on your machine — no upload, no network.</p>
-
-    <fieldset>
-      <legend>1 · Photos</legend>
-      <label class="file-label">Photo 1 <input id="photo-0" type="file" accept="image/*"></label>
-      <label class="file-label">Photo 2 <input id="photo-1" type="file" accept="image/*"></label>
-      <label class="file-label">Photo 3 <input id="photo-2" type="file" accept="image/*"></label>
-      <button id="samples" type="button">Load the two sample photos</button>
-      <p class="hint">Tip: one photo can fill every panel, or give each panel its own photo.</p>
+    <fieldset class="panel">
+      <legend>1 · Photos — three slots</legend>
+      <div class="slots">
+        <div class="slot" data-slot="0">
+          <img id="thumb-0" alt="Slot 1 photo" src="./samples/pier.jpg">
+          <div class="slot-actions">
+            <button type="button" class="pick" data-slot="0">Slot 1 active</button>
+            <label class="upload">Upload <input id="file-0" type="file" accept="image/*"></label>
+            <button type="button" class="sample" data-slot="0" data-sample="pier">Pier</button>
+            <button type="button" class="sample" data-slot="0" data-sample="boulevard">Blvd</button>
+          </div>
+        </div>
+        <div class="slot" data-slot="1">
+          <img id="thumb-1" alt="Slot 2 photo" src="./samples/boulevard.jpg">
+          <div class="slot-actions">
+            <button type="button" class="pick" data-slot="1">Slot 2 active</button>
+            <label class="upload">Upload <input id="file-1" type="file" accept="image/*"></label>
+            <button type="button" class="sample" data-slot="1" data-sample="pier">Pier</button>
+            <button type="button" class="sample" data-slot="1" data-sample="boulevard">Blvd</button>
+          </div>
+        </div>
+        <div class="slot" data-slot="2">
+          <img id="thumb-2" alt="Slot 3 photo (empty)" src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==">
+          <div class="slot-actions">
+            <button type="button" class="pick" data-slot="2">Slot 3 active</button>
+            <label class="upload">Upload <input id="file-2" type="file" accept="image/*"></label>
+            <button type="button" class="sample" data-slot="2" data-sample="pier">Pier</button>
+            <button type="button" class="sample" data-slot="2" data-sample="boulevard">Blvd</button>
+          </div>
+        </div>
+      </div>
+      <label class="zoom-label">Zoom active slot (<span id="zoom-slot-label">1</span>)
+        <input id="zoom" type="range" min="1" max="2.5" step="0.01" value="1">
+      </label>
+      <p class="hint">Drag the cover to pan the active slot. Click a panel to make it active.</p>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="panel">
       <legend>2 · Layout</legend>
-      <div class="button-row" id="layouts">
-        <button type="button" data-layout="hero-trio" class="active">Hero + 3</button>
-        <button type="button" data-layout="grid-four">Grid 2×2</button>
-        <button type="button" data-layout="full-bleed">Full bleed</button>
-        <button type="button" data-layout="tilt-collage">Tilted</button>
+      <div class="choices">
+        <label><input type="radio" name="layout" value="hero-trio" checked> Hero Trio</label>
+        <label><input type="radio" name="layout" value="grid-four"> Grid Four</label>
+        <label><input type="radio" name="layout" value="full-bleed"> Full Bleed</label>
+        <label><input type="radio" name="layout" value="tilt-collage"> Tilt Collage</label>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="panel">
       <legend>3 · Colour grade</legend>
-      <div class="button-row" id="grades">
-        <button type="button" data-grade="vice-sunset" class="active">Vice Sunset</button>
-        <button type="button" data-grade="neon-nights">Neon Nights</button>
-        <button type="button" data-grade="golden-hour">Golden Hour</button>
-        <button type="button" data-grade="noir-pop">Noir Pop</button>
+      <div class="choices">
+        <label><input type="radio" name="grade" value="sunset" checked> Vice Sunset</label>
+        <label><input type="radio" name="grade" value="neon"> Neon Nights</label>
+        <label><input type="radio" name="grade" value="golden"> Golden Hour</label>
+        <label><input type="radio" name="grade" value="noir"> Noir Pop</label>
       </div>
     </fieldset>
 
-    <fieldset>
+    <fieldset class="panel">
       <legend>4 · Words</legend>
-      <label>Title <input id="title" type="text" maxlength="24" value="VICE SUNSET"></label>
-      <label>Subtitle <input id="subtitle" type="text" maxlength="40" value="one last ride"></label>
-      <label>Badge <input id="badge" type="text" maxlength="18" value="LAUNCH WEEK"></label>
+      <label>Title <input id="caption" type="text" maxlength="28" value="Sunset Heist"></label>
+      <label>Subtitle <input id="subtitle" type="text" maxlength="40" value="Vice City Nights"></label>
+      <label>Badge <input id="badge" type="text" maxlength="8" value="VICE"></label>
     </fieldset>
 
-    <fieldset>
-      <legend>5 · Finish</legend>
-      <div class="button-row" id="sizes">
-        <button type="button" data-size="1080x1080" class="active">Square 1080×1080</button>
-        <button type="button" data-size="1080x1350">Portrait 1080×1350</button>
-        <button type="button" data-size="1920x1080">Wide 1920×1080</button>
+    <fieldset class="panel">
+      <legend>5 · Export PNG</legend>
+      <div class="choices">
+        <label><input type="radio" name="size" value="1080x1080" checked> 1080 × 1080</label>
+        <label><input type="radio" name="size" value="1080x1350"> 1080 × 1350</label>
+        <label><input type="radio" name="size" value="1920x1080"> 1920 × 1080</label>
       </div>
-      <label class="check"><input id="grain" type="checkbox" checked> Film grain + vignette</label>
-      <label class="check"><input id="frame" type="checkbox" checked> White poster frame</label>
-      <button id="export" type="button" class="export">Export PNG</button>
+      <button id="exportBtn" type="button">Export PNG</button>
+      <button id="shuffleBtn" type="button">Surprise me — random layout + grade</button>
       <p id="status" role="status"></p>
+      <p class="hint">Keys: 1–4 layout · G grade · E export.</p>
     </fieldset>
   </section>
 
-  <section class="stage" aria-label="Cover preview">
-    <canvas id="cover" width="720" height="720" aria-label="Live cover preview"></canvas>
-    <div class="panel-bar" id="panel-bar" aria-label="Panel editor"></div>
-    <p class="hint">Click a panel in the preview to select it, then drag to move its photo. The slider under each panel zooms it. Export downloads the cover at the size you picked.</p>
-  </section>
+  <div class="preview">
+    <canvas id="cover" width="1080" height="1080" aria-label="Live cover preview"></canvas>
+    <p class="preview-note">Live preview — what you see is what the PNG looks like.</p>
+  </div>
 </main>
 <script type="module" src="./src/main.js"></script>
 </body>
