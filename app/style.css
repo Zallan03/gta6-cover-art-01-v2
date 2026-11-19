@@ -1,0 +1,32 @@
+/* Vice Sunset Cover Studio — dark neon editor chrome around a bright poster preview. */
+@font-face { font-family: 'Anton'; src: url('./fonts/Anton-Regular.ttf') format('truetype'); font-display: swap; }
+@font-face { font-family: 'Pacifico'; src: url('./fonts/Pacifico-Regular.ttf') format('truetype'); font-display: swap; }
+
+* { box-sizing: border-box; }
+html, body { margin: 0; min-height: 100%; background: #12081f; color: #f5eefc; font: 15px/1.45 system-ui, -apple-system, sans-serif; }
+.app { display: flex; gap: 28px; align-items: flex-start; justify-content: center; padding: 24px; flex-wrap: wrap; }
+.controls { display: flex; flex-direction: column; gap: 14px; width: 320px; }
+.controls h1 { margin: 0; font-family: 'Anton', sans-serif; font-size: 34px; line-height: 1.05; letter-spacing: 1px; color: #ffd319; text-shadow: 0 0 18px rgba(255, 41, 117, .8); }
+.controls h1 span { display: block; color: #ff2975; font-size: 22px; }
+.tagline { margin: 0; color: #c9b8e0; }
+fieldset { border: 1px solid #3d2358; border-radius: 10px; padding: 12px; display: flex; flex-direction: column; gap: 10px; background: #1c0f2e; }
+legend { font-weight: 700; color: #8ec9ff; padding: 0 6px; }
+label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; font-size: 13px; }
+input[type=text], select { font: inherit; padding: 9px; border: 1px solid #5b3a86; border-radius: 6px; background: #241338; color: #fff; }
+input[type=file] { font: inherit; color: #c9b8e0; }
+input[type=range] { accent-color: #ff2975; }
+button { font: inherit; font-weight: 700; padding: 11px; border: 0; border-radius: 8px; background: linear-gradient(90deg, #ff2975, #ff7a18); color: #fff; cursor: pointer; }
+button:hover { filter: brightness(1.12); }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #00e5ff; outline-offset: 2px; }
+.samples { display: flex; gap: 8px; }
+.samples button { flex: 1; background: #2c1a4d; border: 1px solid #5b3a86; font-size: 13px; padding: 8px; }
+.hint { margin: 0; color: #a48fc4; font-size: 13px; font-weight: 400; }
+#status { margin: 0; color: #8ec9ff; min-height: 1.2em; }
+.stage { display: flex; flex-direction: column; gap: 10px; align-items: center; }
+.stageHint { margin: 0; color: #a48fc4; font-size: 13px; }
+#cover { width: min(72vh, 640px); height: auto; box-shadow: 0 12px 44px rgba(0, 0, 0, .6), 0 0 0 6px #fff; background: #2b1838; cursor: grab; }
+#cover:active { cursor: grabbing; }
+body.shot-cover .controls, body.shot-cover .stageHint { display: none; }
+body.shot-cover .app { padding: 0; gap: 0; }
+body.shot-cover .stage { width: 100vw; height: 100vh; }
+body.shot-cover #cover { width: 100vw; height: 100vh; object-fit: contain; box-shadow: none; }

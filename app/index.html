@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Vice Sunset Cover Studio — turn any photo and caption into GTA 6-style cover art, offline in your browser.">
+<title>Vice Sunset Cover Studio</title>
+<link rel="stylesheet" href="./style.css">
+</head>
+<body>
+<main class="app">
+  <section class="controls" id="controls">
+    <h1>VICE SUNSET <span>COVER STUDIO</span></h1>
+    <p class="tagline">Your photo, your caption — a Vice City sunset poster in one click. Photos never leave your machine.</p>
+
+    <fieldset>
+      <legend>1 · Photos — up to 3 from your machine</legend>
+      <label>Photo 1 <input id="photo1" type="file" accept="image/*"></label>
+      <label>Photo 2 <input id="photo2" type="file" accept="image/*"></label>
+      <label>Photo 3 <input id="photo3" type="file" accept="image/*"></label>
+      <div class="samples">
+        <button id="sampleA" type="button">Use sample: Boulevard</button>
+        <button id="sampleB" type="button">Use sample: Pier</button>
+      </div>
+      <p class="hint" id="photoStatus">No photo yet — try a sample photo.</p>
+    </fieldset>
+
+    <fieldset>
+      <legend>2 · Layout &amp; grade</legend>
+      <label>Layout
+        <select id="layout">
+          <option value="hero-trio">Hero + 3 panels</option>
+          <option value="grid-four">Grid 2 × 2</option>
+          <option value="full-bleed">Full bleed</option>
+          <option value="tilt-collage">Tilted snapshot collage</option>
+        </select>
+      </label>
+      <label>Grade
+        <select id="grade">
+          <option value="vice-sunset">Vice Sunset</option>
+          <option value="neon-nights">Neon Nights</option>
+          <option value="golden-hour">Golden Hour</option>
+          <option value="noir-pop">Noir Pop</option>
+        </select>
+      </label>
+      <label>Export size
+        <select id="size">
+          <option value="1080x1080">1080 × 1080 — square post</option>
+          <option value="1080x1350">1080 × 1350 — portrait post</option>
+          <option value="1920x1080">1920 × 1080 — landscape post</option>
+        </select>
+      </label>
+    </fieldset>
+
+    <fieldset>
+      <legend>3 · Words</legend>
+      <label>Title <input id="caption" type="text" maxlength="28" value="VICE SUNSET"></label>
+      <label>Subtitle <input id="subtitle" type="text" maxlength="40" value="chasing the last light"></label>
+      <label>Badge <input id="badge" type="text" maxlength="18" value="VICE CITY"></label>
+    </fieldset>
+
+    <fieldset>
+      <legend>4 · Crop the selected panel</legend>
+      <label>Panel
+        <select id="panel"></select>
+      </label>
+      <label>Photo for this panel
+        <select id="panelPhoto"></select>
+      </label>
+      <label>Zoom <input id="zoom" type="range" min="1" max="2.5" step="0.05" value="1.08"></label>
+      <p class="hint">Drag on the preview to pan the selected panel. Each panel keeps its own crop.</p>
+    </fieldset>
+
+    <button id="export" type="button">Export PNG</button>
+    <p id="status" role="status"></p>
+  </section>
+  <section class="stage">
+    <canvas id="cover" width="1080" height="1080" aria-label="Cover preview"></canvas>
+    <p class="stageHint">Live preview — what you see is the PNG you export.</p>
+  </section>
+</main>
+<script type="module" src="./src/main.js"></script>
+</body>
+</html>
