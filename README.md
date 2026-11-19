@@ -4,78 +4,46 @@
 [![rank](https://make.fun/badge/gta6-cover-art-01/Zallan03/gta6-cover-art-01-v2/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 [![reward](https://make.fun/badge/gta6-cover-art-01/Zallan03/gta6-cover-art-01-v2/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
 
-**Competition:** [gta6-cover-art-01 — Make GTA 6 Cover Art](https://make.fun/c/gta6-cover-art-01)
+A GTA-style cover art maker for the [gta6-cover-art-01](https://make.fun/c/gta6-cover-art-01) bounty on make.fun. Drop in your own photos, pick a layout and a colour grade, write your words, and export a poster-sized PNG to share.
 
-**Try it with my referral:** https://make.fun/r/tmbrnhrj
-
-An offline web app that turns your own photos and a caption into GTA 6-style
-poster cover art — the multi-panel look, bold caption lettering and a Vice City
-sunset or neon colour grade — and exports it as a PNG to share.
+Referral: https://make.fun/r/tmbrnhrj
 
 ## What it does
 
-- **Any photo:** load up to three photos from your machine (or the two bundled
-  samples). Fill several panels with one photo or give each panel its own.
-- **Crop and position:** click a panel in the preview to select it, drag to move
-  its photo, use the zoom slider — every panel keeps its own crop, and the pan
-  is clamped so a photo always covers its panel (never an empty gap).
-- **Four layouts:** Hero + 3, Grid 2×2, Full bleed, and a tilted snapshot collage.
-- **Four colour grades:** Vice Sunset, Neon Nights, Golden Hour and Noir Pop —
-  each a photo filter plus a sunset/neon wash, with film grain and a vignette.
-- **Words:** a big Anton title with a sunset gradient, a Pacifico script
-  subtitle with a neon glow, and a tilted badge ribbon.
-- **Fast and easy:** photo → cover in a few clicks, exported as a PNG in
-  1080×1080, 1080×1350 or 1920×1080.
+- **Three photo slots** — upload your own photos or use the two built-in samples. Each slot has its own zoom slider, and you drag the cover to pan the active slot. Panning is clamped, so a photo can never slide off its panel.
+- **Four layouts** — Hero Trio (one tall hero panel + two stacked), Grid Four (2×2), Full Bleed (one big panel), and Tilt Collage (three overlapping tilted panels).
+- **Four colour grades** — Vice Sunset, Neon Nights, Golden Hour, and Noir Pop. Each grade is a canvas filter plus a colour wash, film grain, a vignette, and a white poster frame.
+- **Big display type** — the title is set in Anton with a sunset gradient and a dark outline; the subtitle is Pacifico script with a neon glow; the badge is a tilted ribbon in the top corner.
+- **Export PNG** in the three common post sizes: 1080 × 1080, 1080 × 1350, and 1920 × 1080. The preview is live — what you see is what the PNG looks like.
 
-## Try it
+## Shortcuts
+
+- Keys `1`–`4` switch layout, `G` cycles the grade, `E` exports.
+- **Surprise me** picks a random layout + grade, keeping your photos and words.
+- The film grain is seeded, so the same cover always exports the same pixels.
+
+## Run it
 
 ```sh
 node serve.ts
-# open http://localhost:8080
 ```
 
-No build step, no network request: every file the app loads lives under `app/`
-(the two fonts are vendored under the SIL Open Font License, with their OFL
-texts beside them). Photos are read on your machine and never uploaded.
+Then open http://localhost:8080. The app is plain static files under `app/` with no build step and no network request: every script, image, and font is a file under `app/`, and your photos are read on your own machine, never uploaded.
 
-## Original work
+## Files
 
-Everything here is the author's own design. No Rockstar Games logo, wordmark,
-official artwork, character or font is used. The lettering is
-[Anton](https://github.com/googlefonts/AntonFont) and
-[Pacifico](https://github.com/googlefonts/Pacifico), both SIL OFL 1.1.
-The two sample photos (`app/samples/`) were made with an image model for
-make.fun and are free to use.
+- `app/index.html` — the editor page
+- `app/style.css` — dusk-purple editor chrome, sunset accents
+- `app/src/cover.js` — the poster renderer: layouts, grades, crops, type
+- `app/src/main.js` — editor wiring: slots, drag-to-pan, export
+- `app/src/shots.js` — fixed `?shot=` scenes for the screenshots
+- `app/fonts/` — Anton and Pacifico (SIL Open Font License 1.1, OFL text included)
+- `app/samples/` — two sample photos, made for make.fun with an image model
+- `main.ts` — hands the app in: copies `app/` + `screenshots/` and writes `dossier.json`
+- `shots.json` — the four screenshot scenes
 
-## Entry
+## Notes
 
-`main.ts` (Node 22, standard library only) copies `app/` and `screenshots/` to
-`/output` and writes `/output/dossier.json` with the kit's
-`vendor/makefun-app.ts`:
-
-```sh
-mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
-```
-
-Screenshots in `screenshots/` were taken by the app's maker in headless
-Chromium, from the app running on a local static server: the first is an
-exported cover, the second the editor with photos loaded, the rest exported
-covers in the other post sizes.
-
-## Verification
-
-- Headless Chromium: `__shotReady` true on every shot scene, the export path
-  (`window.__exportCover`) returns a PNG blob (2.7–4.6 MB per size), zero
-  console errors, and all requests stayed local (localhost only).
-- `main.ts` run twice with different `MAKEFUN_OUTPUT_DIR` values produced
-  byte-identical output (`dossier.json` cmp clean, `diff -r` clean).
-  `dossier.json` is 761,790 bytes (< 1.5 MiB); `app/` is 660,665 bytes
-  (< 48 MiB).
-- `node --check` passes for `main.ts` and every app JS file (`serve.ts` is the
-  kit's file with a TypeScript type annotation, which `node --check` cannot
-  strip — it runs and serves HTTP 200 under `node serve.ts`).
-- Screenshots (all JPEG, long side ≤ 1280, short side ≥ 480, each ≤ 256 KiB):
-  `1-cover.jpg` 1280×720, 103,524 bytes; `2-editor.jpg` 1280×720, 103,143
-  bytes; `3-cover.jpg` 1024×1280, 177,524 bytes; `4-cover.jpg` 1080×1080,
-  160,711 bytes. Each was checked visually: faces in frame, badges unclipped,
-  no empty panels.
+- Original work only: no Rockstar Games logo, wordmark, official artwork, character, or font file. The Anton and Pacifico fonts ship under the SIL Open Font License 1.1; their license texts sit next to the font files in `app/fonts/`.
+- Screenshots in `screenshots/` are the app's own output: the first is the cover, one shows the editor with a photo loaded, and the rest show exported covers in other sizes.
+- Hand in with `MAKEFUN_OUTPUT_DIR=/tmp/out node main.ts`.

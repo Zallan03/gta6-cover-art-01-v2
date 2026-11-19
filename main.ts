@@ -1,18 +1,18 @@
-// Vice Sunset Cover Studio — a gta6-cover-art-01 entry (Node 22, standard library only): the app is this
-// directory's app/ folder, plain static files a desktop browser loads offline (app/index.html and its ES modules, no
-// library and no network request), and the program hands it in. It copies app/ and screenshots/ from beside this file
-// to /output and writes /output/dossier.json, the summary the judge reads, with the vendored make.fun library.
-// Rebuild 2: the cover engine, editor and screenshots were rewritten in a fresh recorded session after the first
-// attempt's README was edited outside its recording.
-// The app turns up to three of the person's own photos (or the two bundled samples) into multi-panel GTA-style poster
-// cover art — four layouts, four colour grades, Anton title with a sunset gradient, Pacifico script subtitle, badge
-// ribbon, film grain and a white poster frame — exported as a 1080x1080, 1080x1350 or 1920x1080 PNG.
+// Vice Sunset Cover Studio — a gta6-cover-art-01 entry (Node 22, standard library only).
+// The app is this directory's app/ folder: plain static files a desktop browser loads offline
+// (app/index.html and its ES modules, no library and no network request). It turns up to three
+// photos and a caption into GTA-style multi-panel cover art with a Vice City sunset or neon
+// grade, and exports it as a PNG in the common post sizes 1080 x 1080, 1080 x 1350 and
+// 1920 x 1080. Its two sample photos (app/samples/) were made for make.fun with an image model
+// and are free to use. This program hands the app in: it copies app/ and screenshots/ from
+// beside this file to /output and writes /output/dossier.json, the summary the judge reads,
+// with the vendored make.fun library.
 //
 // Serve it locally with `node serve.ts`, then open http://localhost:8080.
 // Outside the grader's container, MAKEFUN_OUTPUT_DIR stands in for /output:
-//   mkdir -p out && MAKEFUN_OUTPUT_DIR=out node main.ts
+//   MAKEFUN_OUTPUT_DIR=/tmp/out node main.ts
 
-import { cpSync, existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { cpSync, existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { buildDossier } from './vendor/makefun-app.ts';
@@ -39,3 +39,15 @@ writeFileSync(
     app_path_max_bytes: 1000,
   }),
 );
+
+// Preflight: refuse to hand in screenshots the gate would refuse (over 256 KiB),
+// and report the dossier size so a local run shows the entry is inside the caps.
+const shotDir = join(out, 'screenshots');
+for (const name of readdirSync(shotDir)) {
+  const bytes = statSync(join(shotDir, name)).size;
+  if (bytes > 262144) throw new Error(`screenshot ${name} is ${bytes} bytes (cap 262144)`);
+}
+const dossierBytes = statSync(join(out, 'dossier.json')).size;
+
+// Vice Sunset Cover Studio, built fresh in this session: app/ + screenshots/ handed in.
+console.log(`Vice Sunset Cover Studio dossier written to ${join(out, 'dossier.json')} (${dossierBytes} bytes)`);
