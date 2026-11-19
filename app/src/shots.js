@@ -1,82 +1,70 @@
-// Fixed scenes for screenshots, driven by query params:
-//   ?shot=cover  — the exported cover alone (body.shot-cover hides the editor)
-//   ?shot=editor — the editor with photos loaded
-// Params: photo (sample for the hero panel), layout, grade, size (WxH),
-// caption, subtitle, badge, panels (comma list of photo-slot indices).
-// window.__shotReady is set once the scene has painted.
-import { drawCover, panelRects } from './cover.js';
+// Fixed scenes for screenshots: ?shot=editor shows the app with photos loaded;
+// ?shot=cover shows one exported cover alone, drawn by the app itself at the
+// export size. Query params: photo (sample name), photo2, layout, grade, size,
+// caption (title), subtitle, badge. window.__shotReady is set once painted.
+import { GRADES, LAYOUTS, SIZES } from './cover.js';
 
-const SAMPLE_FILES = { boulevard: 'samples/boulevard.jpg', pier: 'samples/pier.jpg' };
-
-/** Scales an export size down so its long side fits 1280 px (screenshot cap). */
-export function shotSize(w, h) {
-  const scale = Math.min(1, 1280 / Math.max(w, h));
-  return [Math.round(w * scale), Math.round(h * scale)];
+/** Applies the scene's query params onto the cover state. */
+export function applyScene(query, state) {
+  const layout = query.get('layout');
+  if (layout && LAYOUTS[layout]) state.layout = layout;
+  const grade = query.get('grade');
+  if (grade && GRADES[grade]) state.grade = grade;
+  const size = query.get('size');
+  if (size && SIZES[size]) state.size = size;
+  const title = query.get('caption');
+  if (title !== null) state.title = title;
+  const subtitle = query.get('subtitle');
+  if (subtitle !== null) state.subtitle = subtitle;
+  const badge = query.get('badge');
+  if (badge !== null) state.badge = badge;
+  // Per-panel photo assignment ("panels=0,1,1") and vertical pan ("pans=0.18").
+  const panels = query.get('panels');
+  if (panels) {
+    panels.split(',').forEach((v, i) => {
+      const n = Number(v);
+      if (state.panels[i] && Number.isInteger(n) && n >= 0 && n < 3) state.panels[i].photo = n;
+    });
+  }
+  const pans = query.get('pans');
+  if (pans) {
+    pans.split(',').forEach((v, i) => {
+      const n = Number(v);
+      if (state.panels[i] && Number.isFinite(n)) state.panels[i].oy = n;
+    });
+  }
 }
 
-export async function runShot(shot, query, api) {
-  const layout = query.get('layout') || 'hero-trio';
-  const grade = query.get('grade') || 'vice-sunset';
-  const sizeParam = query.get('size') || '1080x1080';
-  const [ew, eh] = sizeParam.split('x').map(Number);
-  const caption = query.get('caption') || 'VICE SUNSET';
-  const subtitle = query.get('subtitle') || 'chasing the last light';
-  const badge = query.get('badge') || 'VICE CITY';
-  const heroPhoto = query.get('photo') || 'boulevard';
-
-  api.setLayout(layout);
-  api.setGrade(grade);
-  api.setSize(sizeParam);
-  api.setCaption(caption);
-  api.setSubtitle(subtitle);
-  api.setBadge(badge);
-
-  // Load both bundled samples into slots 3 and 4, nudged down so faces stay in frame.
-  api.photos[3].img = await api.loadImage(SAMPLE_FILES.boulevard);
-  api.photos[4].img = await api.loadImage(SAMPLE_FILES.pier);
-  api.photos[3].panY = 0.08;
-  api.photos[4].panY = 0.06;
-  await api.loadFonts();
-
-  // Panels: explicit list, or a sensible default per layout.
-  const count = panelRects(layout).length;
-  const defaultPanels = {
-    'hero-trio': [3, 4, 3, 4],
-    'grid-four': [3, 4, 4, 3],
-    'full-bleed': [3],
-    'tilt-collage': [3, 4, 3],
-  };
-  const panels = query.get('panels')
-    ? query.get('panels').split(',').map(Number)
-    : (defaultPanels[layout] || [3, 4, 3, 4]).slice(0, count);
-  while (panels.length < count) panels.push(panels.length % 2 === 0 ? 3 : 4);
-  // The named hero photo goes in panel 0.
-  panels[0] = heroPhoto === 'pier' ? 4 : 3;
-  api.setPanels(panels);
-
-  const state = {
-    photos: api.photos,
-    panels,
-    layout,
-    grade,
-    caption,
-    subtitle,
-    badge,
-  };
-
+export async function runShot(shot, query, state, redraw, loadImage) {
   if (shot === 'cover') {
     document.body.classList.add('shot-cover');
-    const [sw, sh] = shotSize(ew, eh);
-    api.canvas.width = sw;
-    api.canvas.height = sh;
-    drawCover(api.canvas, state);
-  } else {
-    api.rebuildPanelPickers();
-    api.refreshPhotoStatus();
-    await api.redraw();
+    window.__shotCover = true;
   }
+  applyScene(query, state);
+  const first = query.get('photo') ?? 'boulevard';
+  const second = query.get('photo2') ?? 'pier';
+  let a;
+  let b;
+  try {
+    [a, b] = await Promise.all([
+      loadImage(`samples/${first}.jpg`),
+      loadImage(`samples/${second}.jpg`),
+    ]);
+  } catch (err) {
+    // A missing sample must not hang the shot: report it and still signal ready.
+    window.__shotError = String(err && err.message ? err.message : err);
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+      window.__shotReady = true;
+      document.documentElement.setAttribute('data-shot-ready', 'true');
+    }));
+    return;
+  }
+  state.photos[0] = a;
+  state.photos[1] = b;
+  await redraw();
+  // Two frames, so the fonts and the canvas have settled before the screenshot.
   requestAnimationFrame(() => requestAnimationFrame(() => {
     window.__shotReady = true;
-    document.documentElement.dataset.shotReady = 'true';
+    document.documentElement.setAttribute('data-shot-ready', 'true');
   }));
 }
