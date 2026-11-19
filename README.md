@@ -1,8 +1,10 @@
 # Vice Sunset Cover Studio
 
-[![make.fun](https://img.shields.io/badge/make.fun-gta6--cover--art--01-ff2975)](https://make.fun/c/gta6-cover-art-01)
-[![Entry](https://img.shields.io/badge/entry-Vice%20Sunset%20Cover%20Studio-ffd319)](https://make.fun/c/gta6-cover-art-01)
-[![Offline](https://img.shields.io/badge/offline-no%20network-00e5ff)](https://make.fun/c/gta6-cover-art-01)
+[![make.fun · gta6-cover-art-01](https://make.fun/badge/gta6-cover-art-01.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![rank](https://make.fun/badge/gta6-cover-art-01/Zallan03/gta6-cover-art-01-v2/rank.svg)](https://make.fun/bounty/gta6-cover-art-01/leaderboard?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+[![reward](https://make.fun/badge/gta6-cover-art-01/Zallan03/gta6-cover-art-01-v2/reward.svg)](https://make.fun/bounty/gta6-cover-art-01?utm_source=github&utm_medium=readme&utm_campaign=gta6-cover-art-01)
+
+Built for the make.fun bounty — join make.fun via my referral: https://make.fun/r/tmbrnhrj
 
 An entry for [gta6-cover-art-01](https://make.fun/c/gta6-cover-art-01): an offline web app
 that turns your photo and a caption into GTA 6-style cover art — a multi-panel poster
